@@ -1,6 +1,6 @@
 '''
-AUTHOR: Dan Grissom
-DATE: Month dd, yyyy
+AUTHOR: Joshua Cervantes, Duncan Barnes
+DATE: Feb 13, 2024
 
 COURSE: CSC - Intelligent Systems
 California Baptist University
@@ -47,7 +47,7 @@ def SimulatedAnnealing():
     eGoal = 0
     tMax = 1
     while (K < kMax and cost > eGoal):
-        T = Fitness(K, tMax)
+        T = tMax * (1 - K / kMax)
         sNew = GenerateRandomNeighborState(initialBoardArray)
         eNew = Fitness(sNew, False)
         deltaE = eNew - cost
