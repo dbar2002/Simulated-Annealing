@@ -40,29 +40,31 @@ def SimulatedAnnealing():
 # print GenerateRandomNeighborState(initialBoardArray)
 
 # Write simulated annealing code here. This is the only place you will need to write code.
-    sBest = initialBoardArray
-    eBest = cost
-    K = 0
-    kMax = 1000000
-    eGoal = 0
-    tMax = 1
-    while (K < kMax and cost > eGoal):
-        T = tMax * (1 - K / kMax)
-        sNew = GenerateRandomNeighborState(initialBoardArray)
-        eNew = Fitness(sNew, False)
-        deltaE = eNew - cost
-        if eNew < cost:
-            initialBoardArray = sNew
-            cost = eNew
-            if cost < eBest:
-                sBest = sNew
-                eBest = eNew
-        else:
-            if random.uniform(0, 1) < math.exp(deltaE / T):
-                initialBoardArray = sNew
-                cost = eNew
-        K = K + 1
-    print sBest
+# Simulated annealing code starts here.
+    temperature = 1000  # Initial temperature
+    cooling_rate = 0.005  # Cooling rate
+
+    current_solution = initialBoardArray  # Start with initial solution
+    current_energy = Fitness(current_solution, False)  # Calculate energy of current solution
+
+    iterations = 0
+    while temperature > 1 and iterations < 100000:
+        neighbor_solution = GenerateRandomNeighborState(current_solution)  # Generate neighbor solution
+        neighbor_energy = Fitness(neighbor_solution, False)  # Calculate energy of neighbor solution
+
+        energy_difference = neighbor_energy - current_energy  # Calculate energy difference
+
+        # Accept or reject the neighbor solution
+        if energy_difference < 0 or random.random() < math.exp(-energy_difference / temperature):
+            current_solution = neighbor_solution
+            current_energy = neighbor_energy
+
+        temperature *= 1 - cooling_rate  # Cool down temperature
+        iterations += 1
+
+    PrintBoard(current_solution)  # Print final solution
+    print("The final solution has " + str(current_energy) + " pairs of queens in attacking position.")
+    print("Total iterations:", iterations)
 
 
 
