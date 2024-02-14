@@ -29,9 +29,9 @@ n = 8  # for 8-queens problem
 
 
 def SimulatedAnnealing():
-    initialBoardArray = GenerateRandomBoardState()
+    initialBoardArray = GenerateRandomBoardState() # s <- s0
     PrintBoard(initialBoardArray)
-    cost = Fitness(initialBoardArray, True)
+    cost = Fitness(initialBoardArray, True) # e <- E(s)
     print
     "The initial solution has " + str(cost) + " pairs of queens in attacking position."
 
@@ -40,6 +40,30 @@ def SimulatedAnnealing():
 # print GenerateRandomNeighborState(initialBoardArray)
 
 # Write simulated annealing code here. This is the only place you will need to write code.
+    sBest = initialBoardArray
+    eBest = cost
+    K = 0
+    kMax = 1000000
+    eGoal = 0
+    tMax = 1
+    while (K < kMax and cost > eGoal):
+        T = Fitness(K, tMax)
+        sNew = GenerateRandomNeighborState(initialBoardArray)
+        eNew = Fitness(sNew, False)
+        deltaE = eNew - cost
+        if eNew < cost:
+            initialBoardArray = sNew
+            cost = eNew
+            if cost < eBest:
+                sBest = sNew
+                eBest = eNew
+        else:
+            if random.uniform(0, 1) < math.exp(deltaE / T):
+                initialBoardArray = sNew
+                cost = eNew
+        K = K + 1
+    print sBest
+
 
 
 '''
