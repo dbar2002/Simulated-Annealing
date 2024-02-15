@@ -40,33 +40,34 @@ def SimulatedAnnealing():
 # print GenerateRandomNeighborState(initialBoardArray)
 
 # Write simulated annealing code here. This is the only place you will need to write code.
-# Simulated annealing code starts here.
-    temperature = 1000  # Initial temperature
-    cooling_rate = 0.005  # Cooling rate
+    # Constants
+    k = 0
+    kMax = 20000  # Maximum iterations
+    eGoal = 0  # Goal energy
+    T = 1  # Initial temperature
 
-    current_solution = initialBoardArray  # Start with initial solution
-    current_energy = Fitness(current_solution, False)  # Calculate energy of current solution
+    # Ensure eBest is assigned before the while loop
+    sBest = initialBoardArray
+    eBest = cost
 
-    iterations = 0
-    while temperature > 1 and iterations < 100000:
-        neighbor_solution = GenerateRandomNeighborState(current_solution)  # Generate neighbor solution
-        neighbor_energy = Fitness(neighbor_solution, False)  # Calculate energy of neighbor solution
+    # Simulated annealing algorithm
+    while k < kMax and eBest > eGoal:
+        # Temperature update
+        T = T * (1 - k / kMax)
+        sNew = GenerateRandomNeighborState(sBest)  # sNew <- neighbor(sBest)
+        eNew = Fitness(sNew, False)  # eNew <- E(sNew)
+        if eNew < eBest:
+            sBest = sNew  # sBest <- sNew
+            eBest = eNew  # eBest <- eNew
+        elif random.random() < math.exp((eBest - eNew) / T):
+            sBest = sNew  # sBest <- sNew
+            eBest = eNew  # eBest <- eNew
+        k += 1
 
-        energy_difference = neighbor_energy - current_energy  # Calculate energy difference
-
-        # Accept or reject the neighbor solution
-        if energy_difference < 0 or random.random() < math.exp(-energy_difference / temperature):
-            current_solution = neighbor_solution
-            current_energy = neighbor_energy
-
-        temperature *= 1 - cooling_rate  # Cool down temperature
-        iterations += 1
-
-    PrintBoard(current_solution)  # Print final solution
-    print("The final solution has " + str(current_energy) + " pairs of queens in attacking position.")
-    print("Total iterations:", iterations)
-
-
+    print("\nFinal solution:")
+    PrintBoard(sBest)
+    print("The final solution has " + str(eBest) + " pairs of queens in attacking position.")
+    print("Total iterations:", k)
 
 '''
 This function takes as parameters a list representing the state and a boolean
